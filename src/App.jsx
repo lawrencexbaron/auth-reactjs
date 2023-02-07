@@ -7,9 +7,49 @@ function App() {
   const [contact, setContact] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [data, setData] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(false);
+    setLoading(true);
+    try {
+      if (!username || !email || !contact || !password || !confirmPassword) {
+        setError("All fields are required");
+        setLoading(false);
+        return;
+      }
+      if (password !== confirmPassword) {
+        setError("Password and Confirm Password must be same");
+        setLoading(false);
+        return;
+      }
+      if (password.length < 6) {
+        setError("Password must be atleast 6 characters long");
+        setLoading(false);
+        return;
+      }
+      if (contact.length !== 10) {
+        setError("Contact must be 10 digits long");
+        setLoading(false);
+        return;
+      }
+      if (!email.includes("@")) {
+        setError("Email must be valid");
+        setLoading(false);
+        return;
+      }
+      setSuccess(true);
+      setLoading(false);
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+
     console.log(username, email, contact, password, confirmPassword);
     // clear the form
     setUsername("");
@@ -25,6 +65,16 @@ function App() {
           <h1 className="text-2xl font-bold">Authentication</h1>
         </div>
         <form onSubmit={handleSubmit}>
+          {error && (
+            <div className="bg-red-100 border-2 border-red-500 rounded-md px-2 py-1 my-5">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="bg-green-100 border-2 border-green-500 rounded-md px-2 py-1 my-5">
+              Success
+            </div>
+          )}
           <div className="mx-auto flex flex-col space-y-1">
             <label htmlFor="username" className="text-base font-semibold">
               Username
